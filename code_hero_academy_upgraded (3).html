@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Hero Academy | Developed by Amrit Srivastav</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;600;700&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b0f19;
+            --panel-bg: #161f30;
+            --panel-border: #2a3a5c;
+            --html-color: #f97316;
+            --c-color: #06b6d4;
+            --java-color: #eab308;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            margin: 0;
+            padding: 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* HEADER & DASHBOARD */
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        header h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.2rem;
+            margin: 0 0 5px 0;
+            background: linear-gradient(90deg, var(--html-color), var(--c-color), var(--java-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: var(--panel-bg);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--panel-border);
+            width: fit-content;
+            margin: 0 auto;
+            font-weight: 700;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* TAB NAVIGATION */
+        .tab-bar {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: var(--panel-bg);
+            border: 2px solid var(--panel-border);
+            color: var(--text-light);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active-html { border-color: var(--html-color); background: var(--html-color); }
+        .tab-btn.active-c { border-color: var(--c-color); background: var(--c-color); }
+        .tab-btn.active-java { border-color: var(--java-color); background: var(--java-color); color: #000; }
+
+        /* MAIN WORKSPACE */
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 15px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        @media (max-width: 900px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+
+        .editor-section {
+            background: var(--panel-bg);
+            border-radius: 16px;
+            border: 1px solid var(--panel-border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 10px;
+        }
+
+        .level-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+
+        .instructions {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* CODE EDITOR AREA */
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            background: #090d16;
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            color: #38bdf8;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            padding: 12px;
+            resize: vertical;
+            outline: none;
+            user-select: text;
+        }
+
+        textarea:focus { border-color: #38bdf8; }
+
+        /* OUTPUT & CONSOLE */
+        .output-box {
+            background: #090d16;
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            padding: 12px;
+            min-height: 120px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-y: auto;
+        }
+
+        .preview-html {
+            background: white;
+            color: black;
+            font-family: sans-serif;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 100px;
+        }
+
+        /* CONTROLS */
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .btn:active { transform: scale(0.96); }
+
+        .btn-run { background: var(--accent-green); color: white; flex: 2; }
+        .btn-hint { background: #6366f1; color: white; flex: 1; }
+
+        /* AI SIDEBAR & CHAT */
+        .ai-sidebar {
+            background: var(--panel-bg);
+            border-radius: 16px;
+            border: 1px solid var(--panel-border);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 600px;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            color: #38bdf8;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 8px;
+        }
+
+        .chat-logs {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 4px;
+        }
+
+        .chat-msg {
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-width: 90%;
+        }
+
+        .msg-ai {
+            background: #1e293b;
+            color: var(--text-light);
+            align-self: flex-start;
+            border-left: 3px solid #38bdf8;
+        }
+
+        .msg-user {
+            background: #2563eb;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .chat-input-bar {
+            display: flex;
+            gap: 6px;
+        }
+
+        .chat-input-bar input {
+            flex: 1;
+            background: #090d16;
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            color: white;
+            padding: 8px 10px;
+            font-family: inherit;
+            outline: none;
+            user-select: text;
+        }
+
+        .chat-input-bar button {
+            background: #38bdf8;
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .top-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;justify-content:center}
+        .top-btn{border:1px solid var(--panel-border);background:#111a2a;color:var(--text-light);padding:9px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+        .top-btn:hover{border-color:#38bdf8;transform:translateY(-1px)}
+        .modal{position:fixed;inset:0;background:rgba(2,6,23,.78);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+        .modal.show{display:flex}.modal-card{width:min(980px,100%);max-height:90vh;overflow:auto;background:#101827;border:1px solid #33466d;border-radius:18px;padding:22px;box-shadow:0 20px 70px #0008}
+        .modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.close{background:transparent;border:0;color:#fff;font-size:25px;cursor:pointer}
+        .hero{display:grid;grid-template-columns:1.4fr .9fr;gap:20px;align-items:center}.hero-box{padding:26px;border:1px solid #33466d;border-radius:18px;background:linear-gradient(145deg,#17233a,#0e1524)}
+        .hero h2{font-size:clamp(30px,5vw,56px);margin:0 0 12px}.hero p{color:var(--text-muted);font-size:1.05rem;line-height:1.6}.hero-badge{display:inline-block;padding:7px 11px;border-radius:999px;background:#0b3b4b;color:#67e8f9;font-weight:800}
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:18px}.card{border:1px solid #2b3b5c;background:#121c2d;border-radius:14px;padding:16px}.price{font-size:25px;font-weight:900;color:#86efac}.muted{color:var(--text-muted)}
+        .field{width:100%;padding:11px;border-radius:9px;border:1px solid #33466d;background:#0b1220;color:#fff;margin:7px 0 12px}.primary{background:#22c55e;color:#04110a;border:0;padding:11px 16px;border-radius:9px;font-weight:900;cursor:pointer}.danger{background:#ef4444;color:#fff;border:0;padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer}
+        .admin-stat{font-size:28px;font-weight:900}.secure-note{padding:12px;border-radius:10px;background:#0b2030;border:1px solid #164e63;color:#bae6fd;margin-top:14px}
+        footer{width:100%;max-width:1200px;text-align:center;color:#64748b;padding:25px 0 10px;font-size:.9rem}.developer-credit{margin-top:10px;font-size:1rem;color:#cbd5e1}.developer-credit strong{color:#67e8f9}.live-clock{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:999px;background:rgba(15,23,42,.75);border:1px solid #334155;color:#e2e8f0;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.18)}.live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 12px #22c55e}.hidden{display:none!important}
+        @media(max-width:800px){.hero{grid-template-columns:1fr}.workspace{grid-template-columns:1fr!important}}
+    </style>
+
+    <style>
+      /* Kid-friendly learning theme */
+      :root{--bg:#fff7ed;--panel:#ffffff;--text:#263238;--text-muted:#64748b;--html-color:#ff7a00;--c-color:#16a34a;--java-color:#e11d48;}
+      body{background:linear-gradient(135deg,#fff7ed 0%,#eff6ff 48%,#f0fdf4 100%);color:#263238;}
+      header{background:linear-gradient(90deg,#ff7a00,#facc15,#22c55e,#38bdf8);color:#fff;border-bottom:4px solid #fff;}
+      header h1{color:#fff;text-shadow:2px 3px 0 rgba(0,0,0,.12);}
+      .stat-item,.top-btn,.tab-btn,.btn{border-radius:16px;}
+      .stat-item{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.45);}
+      .top-actions{background:#fff;border-bottom:1px solid #fed7aa;}
+      .top-btn{background:#fff7ed;border:2px solid #fdba74;color:#c2410c;}
+      .top-btn:hover{background:#ffedd5;transform:translateY(-2px);}
+      .tab-bar{background:#fff;border-bottom:3px solid #bae6fd;}
+      .tab-btn{font-weight:800;}
+      .workspace{gap:20px;}
+      .editor-section,.sidebar-section{background:rgba(255,255,255,.94);border:2px solid #e0f2fe;border-radius:24px;box-shadow:0 12px 30px rgba(59,130,246,.10);}
+      .level-title{color:#7c3aed;}
+      .instructions{background:#fef3c7;border:2px dashed #f59e0b;border-radius:16px;color:#78350f;}
+      textarea{border:3px solid #c4b5fd!important;border-radius:18px!important;background:#faf5ff!important;color:#312e81!important;}
+      .output-box{border:3px solid #86efac!important;border-radius:18px!important;background:#f0fdf4!important;}
+      .btn-run{background:linear-gradient(135deg,#22c55e,#16a34a)!important;}
+      .btn-hint{background:linear-gradient(135deg,#facc15,#fb923c)!important;color:#422006!important;}
+      .live-clock{background:#ecfdf5!important;color:#166534!important;border:2px solid #86efac!important;border-radius:999px!important;font-weight:800;}
+      .login-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffedd5,#dbeafe,#dcfce7);padding:20px;}
+      .login-card{width:min(430px,100%);background:#fff;border-radius:30px;padding:34px;box-shadow:0 25px 70px rgba(30,64,175,.22);border:4px solid #fff;text-align:center;}
+      .login-card .mascot{font-size:64px;margin-bottom:8px;}
+      .login-card h2{font-size:30px;color:#7c3aed;margin:5px 0;}
+      .login-card p{color:#64748b;margin-bottom:22px;}
+      .login-card input{width:100%;box-sizing:border-box;padding:14px 16px;margin:7px 0;border:2px solid #c4b5fd;border-radius:14px;font-size:16px;outline:none;}
+      .login-card input:focus{border-color:#7c3aed;box-shadow:0 0 0 4px #ede9fe;}
+      .login-card button{width:100%;padding:14px;margin-top:12px;border:0;border-radius:16px;background:linear-gradient(90deg,#7c3aed,#ec4899);color:#fff;font-size:17px;font-weight:800;cursor:pointer;}
+      .login-error{color:#dc2626;font-size:14px;min-height:20px;margin-top:9px;}
+      .login-note{font-size:12px;color:#94a3b8;margin-top:14px;}
+      .login-hidden{display:none!important;}
+    </style>
+</head>
+<body>
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="mascot">🚀👨‍💻⭐</div>
+    <h2>Code Hero Academy</h2>
+    <p>Learn coding, play, practice & become a Code Hero!</p>
+    <input id="login-user" type="text" placeholder="👤 Username" autocomplete="username">
+    <input id="login-pass" type="password" placeholder="🔑 Password" autocomplete="current-password">
+    <button onclick="loginAcademy()">🚀 Start Learning</button>
+    <div id="login-error" class="login-error"></div>
+    <div class="login-note">Demo student login: student / Hero123</div>
+  </div>
+</div>
+
+
+    <header>
+        <h1>🎮 Code Hero Academy</h1>
+        <div class="stats-bar">
+            <div class="stat-item">⭐ XP: <span id="xp-val">0</span></div>
+            <div class="stat-item">🏆 Level: <span id="lvl-val">1</span></div>
+            <div class="stat-item">🔥 Streak: <span id="streak-val">1</span></div>
+        </div>
+    </header>
+
+    <div class="top-actions"><div class="live-clock"><span class="live-dot"></span><span id="live-date-time">Loading...</span></div>
+        <button class="top-btn" onclick="openModal('intro-modal')">🚀 Intro</button>
+        <button class="top-btn" onclick="openModal('store-modal')">🛒 Buy Courses</button>
+        <button class="top-btn" onclick="openModal('coupon-modal')">🎟️ Coupon</button>
+        <button class="top-btn" onclick="openModal('admin-modal')">🔐 Admin Panel</button>
+    </div>
+
+    <div class="tab-bar">
+        <button id="tab-html" class="tab-btn active-html" onclick="switchLang('html')">🌐 HTML</button>
+        <button id="tab-c" class="tab-btn" onclick="switchLang('c')">⚙️ C Language</button>
+        <button id="tab-java" class="tab-btn" onclick="switchLang('java')">☕ Java</button>
+    </div>
+
+    <div class="workspace">
+        <!-- CODE EDITOR AREA -->
+        <div class="editor-section">
+            <div class="level-header">
+                <h2 id="level-title" class="level-title">Level 1</h2>
+                <span id="lang-tag" style="font-weight: bold; color: var(--html-color);">HTML</span>
+            </div>
+
+            <p id="level-instructions" class="instructions">Loading level setup...</p>
+
+            <div class="editor-container">
+                <label style="font-weight: bold; font-size: 0.85rem; color: var(--text-muted);">WRITE YOUR CODE HERE:</label>
+                <textarea id="code-editor" spellcheck="false"></textarea>
+            </div>
+
+            <div>
+                <label style="font-weight: bold; font-size: 0.85rem; color: var(--text-muted);">LIVE OUTPUT / CONSOLE:</label>
+                <div id="output-box" class="output-box"></div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-run" onclick="runCode()">TEST CODE ▶</button>
+                <button class="btn btn-hint" onclick="askAiHint()">💡 AI HINT</button>
+            </div>
+        </div>
+
+        <!-- AI ASSISTANT CHAT -->
+        <div class="ai-sidebar">
+            <div class="ai-header">🤖 AI Coding Tutor</div>
+            <div id="chat-logs" class="chat-logs">
+                <div class="chat-msg msg-ai">Hi! I am your AI coding buddy. Write code on the left and test it, or ask me any question!</div>
+            </div>
+            <div class="chat-input-bar">
+                <input id="chat-input" type="text" placeholder="Ask a question..." onkeydown="if(event.key==='Enter') sendUserQuery()">
+                <button onclick="sendUserQuery()">Send</button>
+            </div>
+        </div>
+    </div>
+
+
+    <footer><div>© 2026 Code Hero Academy</div><div class="developer-credit">✨ Developed & designed by <strong>Amrit Srivastav</strong></div><div style="margin-top:7px;font-size:.82rem;color:#64748b">Interactive Coding • Live Learning • Smart Practice</div></footer>
+
+    <div id="intro-modal" class="modal"><div class="modal-card hero"><div class="hero-box"><span class="hero-badge">LEARN • PRACTICE • LEVEL UP</span><h2>Code Hero Academy</h2><p>Interactive HTML, C and Java learning with coding challenges, instant checking and an AI-style coding buddy.</p><button class="primary" onclick="closeModal('intro-modal')">Start Learning</button></div><div class="card"><h3>What you get</h3><p>🌐 HTML challenges</p><p>⚙️ C practice</p><p>☕ Java basics</p><p>🤖 Coding tutor</p><p>🏆 XP & levels</p><div class="secure-note">🔒 Demo security: input validation, safe text rendering and admin session checks are included in this front-end version.</div></div></div></div>
+
+    <div id="store-modal" class="modal"><div class="modal-card"><div class="modal-head"><h2>🛒 Course Store</h2><button class="close" onclick="closeModal('store-modal')">×</button></div><div class="grid"><div class="card"><h3>HTML Hero</h3><p class="muted">Beginner web development module.</p><p class="price">₹199</p><button class="primary" onclick="buyCourse('HTML Hero',199)">Buy Now</button></div><div class="card"><h3>C Starter</h3><p class="muted">Programming fundamentals.</p><p class="price">₹249</p><button class="primary" onclick="buyCourse('C Starter',249)">Buy Now</button></div><div class="card"><h3>Java Basics</h3><p class="muted">Object-oriented programming basics.</p><p class="price">₹299</p><button class="primary" onclick="buyCourse('Java Basics',299)">Buy Now</button></div></div><div id="purchase-status" class="secure-note">Choose a course to create a demo order.</div></div></div>
+
+    <div id="coupon-modal" class="modal"><div class="modal-card"><div class="modal-head"><h2>🎟️ Apply Coupon</h2><button class="close" onclick="closeModal('coupon-modal')">×</button></div><p class="muted">Demo coupons: <strong>HERO10</strong> = 10% off, <strong>WELCOME50</strong> = ₹50 off.</p><input id="coupon-input" class="field" maxlength="20" placeholder="Enter coupon code"><button class="primary" onclick="applyCoupon()">Apply Coupon</button><div id="coupon-result" class="secure-note">No coupon applied.</div></div></div>
+
+    <div id="admin-modal" class="modal"><div class="modal-card"><div class="modal-head"><h2>🔐 Admin Panel</h2><button class="close" onclick="closeModal('admin-modal')">×</button></div><div id="admin-login"><p class="muted">Demo admin login. In production, authenticate on a server and never store passwords in frontend JavaScript.</p><input id="admin-user" class="field" maxlength="40" placeholder="Username"><input id="admin-pass" class="field" maxlength="80" type="password" placeholder="Password"><button class="primary" onclick="adminLogin()">Login</button><div id="admin-error" class="secure-note hidden"></div></div><div id="admin-dashboard" class="hidden"><div class="grid"><div class="card"><div class="admin-stat" id="order-count">0</div><div class="muted">Orders</div></div><div class="card"><div class="admin-stat" id="revenue-count">₹0</div><div class="muted">Demo Revenue</div></div><div class="card"><div class="admin-stat" id="coupon-count">2</div><div class="muted">Active Coupons</div></div></div><h3>Recent Orders</h3><div id="order-list" class="muted">No orders yet.</div><div class="secure-note">🔒 Admin session is kept in memory only. For a real deployment, use HTTPS, hashed passwords, server-side authorization, secure cookies and a payment provider.</div></div></div></div>
+
+    <script>
+        // CURRICULUM LEVELS DATA
+        const CURRICULUM = {
+            html: [
+                {
+                    title: "HTML Level 1: Heading Tag",
+                    desc: "Create an opening & closing heading tag <h1> Hello </h1> to display text on the web canvas.",
+                    startCode: "<!-- Write your <h1> tag below -->\n",
+                    check: (code) => /<h1>[\s\S]*?<\/h1>/i.test(code),
+                    hint: "Use <h1>Your Text Here</h1> to make a heading!"
+                },
+                {
+                    title: "HTML Level 2: Paragraph & Button",
+                    desc: "Add a paragraph <p>tag</p> AND a button <button>Click</button> tag.",
+                    startCode: "<h1>My Web Page</h1>\n<!-- Add <p> and <button> below -->\n",
+                    check: (code) => /<p>[\s\S]*?<\/p>/i.test(code) && /<button>[\s\S]*?<\/button>/i.test(code),
+                    hint: "Make sure you have both <p>text</p> and <button>text</button> in your code."
+                }
+            ],
+            c: [
+                {
+                    title: "C Level 1: Print Statement",
+                    desc: "Fix the code to print 'Hello World' using printf().",
+                    startCode: "#include <stdio.h>\n\nint main() {\n    // Print Hello World below\n    \n    return 0;\n}",
+                    check: (code) => code.includes("printf") && code.includes("Hello World"),
+                    hint: "Add printf(\"Hello World\"); inside the main function!"
+                },
+                {
+                    title: "C Level 2: Variables",
+                    desc: "Declare an integer variable named 'score' equal to 100.",
+                    startCode: "#include <stdio.h>\n\nint main() {\n    // Declare int score = 100;\n    \n    return 0;\n}",
+                    check: (code) => /int\s+score\s*=\s*100\s*;/.test(code),
+                    hint: "Type: int score = 100;"
+                }
+            ],
+            java: [
+                {
+                    title: "Java Level 1: Print Console",
+                    desc: "Use System.out.println(\"Hi Java\"); inside main.",
+                    startCode: "public class Main {\n    public static void main(String[] args) {\n        // Print Hi Java here\n        \n    }\n}",
+                    check: (code) => code.includes("System.out.println") && code.includes("Hi Java"),
+                    hint: "Write System.out.println(\"Hi Java\"); inside main!"
+                }
+            ]
+        };
+
+        // GAME STATE
+        let currentLang = 'html';
+        let currentLvlIdx = 0;
+        let xp = 0;
+
+        // INITIALIZATION
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLevel();
+        });
+
+        function switchLang(lang) {
+            currentLang = lang;
+            currentLvlIdx = 0;
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.className = 'tab-btn');
+            const activeBtn = document.getElementById(`tab-${lang}`);
+            if (activeBtn) activeBtn.classList.add(`active-${lang}`);
+            
+            const langTag = document.getElementById('lang-tag');
+            langTag.innerText = lang.toUpperCase();
+            langTag.style.color = lang === 'html' ? 'var(--html-color)' : (lang === 'c' ? 'var(--c-color)' : 'var(--java-color)');
+
+            loadLevel();
+        }
+
+        function loadLevel() {
+            const levelData = CURRICULUM[currentLang][currentLvlIdx];
+            if (!levelData) return;
+
+            document.getElementById('level-title').innerText = levelData.title;
+            document.getElementById('level-instructions').innerText = levelData.desc;
+            document.getElementById('code-editor').value = levelData.startCode;
+            document.getElementById('output-box').innerHTML = '<span style="color:var(--text-muted);">Console ready...</span>';
+        }
+
+        function runCode() {
+            const code = document.getElementById('code-editor').value;
+            const levelData = CURRICULUM[currentLang][currentLvlIdx];
+            const outputBox = document.getElementById('output-box');
+
+            // Render output visually
+            if (currentLang === 'html') {
+                outputBox.innerHTML = `<div class="preview-html">${code}</div>`;
+            } else {
+                outputBox.innerText = `[Executing ${currentLang.toUpperCase()}...]\nSimulation Output:\n` + 
+                    (code.includes("printf") || code.includes("System.out.println") ? "Hello World / Program Executed!" : "Code compiled with 0 errors.");
+            }
+
+            // Check correctness
+            if (levelData.check(code)) {
+                xp += 50;
+                document.getElementById('xp-val').innerText = xp;
+                appendAiMsg(`🎉 Great job! You passed ${levelData.title}! (+50 XP)`);
+                
+                if (currentLvlIdx + 1 < CURRICULUM[currentLang].length) {
+                    currentLvlIdx++;
+                    setTimeout(() => {
+                        alert("Level Completed! Moving to next level...");
+                        loadLevel();
+                    }, 600);
+                } else {
+                    alert("🌟 Module Complete! Try switching to another programming language!");
+                }
+            } else {
+                appendAiMsg(`🔍 Code check: Not quite right yet. Re-check the level goal or press "AI HINT"!`);
+            }
+        }
+
+        function askAiHint() {
+            const levelData = CURRICULUM[currentLang][currentLvlIdx];
+            appendAiMsg(`💡 HINT: ${levelData.hint}`);
+        }
+
+        function sendUserQuery() {
+            const input = document.getElementById('chat-input');
+            const query = input.value.trim();
+            if (!query) return;
+
+            // Append User Msg
+            appendUserMsg(query);
+            input.value = '';
+
+            // AI Response Fallback / Smart Buddy Logic
+            setTimeout(() => {
+                let aiReply = "I'm here to help! ";
+                const q = query.toLowerCase();
+                
+                if (q.includes("error") || q.includes("wrong") || q.includes("help")) {
+                    aiReply += "Make sure all open tags or braces are closed correctly! In C & Java, don't forget semicolons `;` at the end of statements.";
+                } else if (q.includes("html")) {
+                    aiReply += "HTML uses tags like `<h1>` for titles, `<p>` for paragraphs, and `<img>` for images!";
+                } else if (q.includes("c")) {
+                    aiReply += "C is a fast system language! We print using `printf(\"...\");` and start in `main()`.";
+                } else if (q.includes("java")) {
+                    aiReply += "Java is Object-Oriented! Everything is written inside a `class` and uses `System.out.println()` to print.";
+                } else {
+                    aiReply += "Keep experimenting! Type your code on the left and click 'TEST CODE' to see it in action.";
+                }
+
+                appendAiMsg(aiReply);
+            }, 300);
+        }
+
+        function appendAiMsg(msg) {
+            const logs = document.getElementById('chat-logs');
+            const el = document.createElement('div');
+            el.className = 'chat-msg msg-ai';
+            el.innerText = msg;
+            logs.appendChild(el);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+
+        // STORE / COUPON / ADMIN DEMO FEATURES
+        const ADMIN_USER = 'admin';
+        const ADMIN_PASS = 'CodeHero@2026';
+        let adminAuthenticated = false;
+        let activeCoupon = null;
+        let orders = JSON.parse(localStorage.getItem('cha_orders') || '[]');
+
+        function openModal(id){ document.getElementById(id).classList.add('show'); if(id==='admin-modal') renderAdmin(); }
+        function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+        document.addEventListener('click', e => { if(e.target.classList.contains('modal')) e.target.classList.remove('show'); });
+
+        function sanitizeCoupon(value){ return value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,20); }
+        function applyCoupon(){
+            const code = sanitizeCoupon(document.getElementById('coupon-input').value);
+            const out = document.getElementById('coupon-result');
+            if(code==='HERO10'){ activeCoupon={code, type:'percent', value:10}; out.innerText='✅ HERO10 applied: 10% discount.'; }
+            else if(code==='WELCOME50'){ activeCoupon={code, type:'flat', value:50}; out.innerText='✅ WELCOME50 applied: ₹50 discount.'; }
+            else { activeCoupon=null; out.innerText='❌ Invalid coupon code.'; }
+        }
+        function buyCourse(name, price){
+            let finalPrice=price;
+            if(activeCoupon) finalPrice=activeCoupon.type==='percent' ? Math.max(0,Math.round(price*(1-activeCoupon.value/100))) : Math.max(0,price-activeCoupon.value);
+            const order={id:'ORD-'+Date.now(),name,price,finalPrice,coupon:activeCoupon?.code||null,createdAt:new Date().toLocaleString()};
+            orders.push(order); localStorage.setItem('cha_orders',JSON.stringify(orders));
+            document.getElementById('purchase-status').innerText=`✅ Demo order created for ${name}. Payable amount: ₹${finalPrice}.`;
+            renderAdmin();
+        }
+        function adminLogin(){
+            const user=document.getElementById('admin-user').value.trim();
+            const pass=document.getElementById('admin-pass').value;
+            const err=document.getElementById('admin-error');
+            if(user===ADMIN_USER && pass===ADMIN_PASS){ adminAuthenticated=true; err.classList.add('hidden'); document.getElementById('admin-login').classList.add('hidden'); document.getElementById('admin-dashboard').classList.remove('hidden'); renderAdmin(); }
+            else { err.classList.remove('hidden'); err.innerText='❌ Invalid admin credentials.'; }
+        }
+        function renderAdmin(){
+            if(!document.getElementById('order-count')) return;
+            if(!adminAuthenticated) return;
+            document.getElementById('order-count').innerText=orders.length;
+            document.getElementById('revenue-count').innerText='₹'+orders.reduce((a,o)=>a+o.finalPrice,0);
+            const list=document.getElementById('order-list');
+            list.innerHTML=orders.length?orders.slice().reverse().map(o=>`<div class="card" style="margin:8px 0"><strong>${escapeHtml(o.name)}</strong> — ₹${o.finalPrice} <span class="muted">(${escapeHtml(o.createdAt)})</span></div>`).join(''):'No orders yet.';
+        }
+        function escapeHtml(value){ const d=document.createElement('div'); d.textContent=String(value); return d.innerHTML; }
+
+        function appendUserMsg(msg) {
+            const logs = document.getElementById('chat-logs');
+            const el = document.createElement('div');
+            el.className = 'chat-msg msg-user';
+            el.innerText = msg;
+            logs.appendChild(el);
+            logs.scrollTop = logs.scrollHeight;
+        }
+    </script>
+
+<script>
+function updateLiveDateTime(){
+  const el=document.getElementById('live-date-time');
+  if(!el) return;
+  const now=new Date();
+  const date=now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  const time=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+  el.textContent=date+' • '+time;
+}
+updateLiveDateTime();
+setInterval(updateLiveDateTime,1000);
+</script>
+
+<script>
+function loginAcademy(){
+ const u=document.getElementById('login-user').value.trim();
+ const p=document.getElementById('login-pass').value;
+ const e=document.getElementById('login-error');
+ if(u==='student' && p==='Hero123'){document.getElementById('login-screen').classList.add('login-hidden');sessionStorage.setItem('academyLoggedIn','1');}
+ else e.textContent='Username or password is incorrect. Try the demo login shown below.';
+}
+(function(){
+ if(sessionStorage.getItem('academyLoggedIn')==='1') document.getElementById('login-screen').classList.add('login-hidden');
+ document.addEventListener('keydown',function(ev){if(ev.key==='Enter' && !document.getElementById('login-screen').classList.contains('login-hidden')) loginAcademy();});
+})();
+</script>
+</body>
+</html>
